@@ -7,5 +7,5 @@ from django.contrib.auth.models import User
 class LikedItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    content_id = models.PositiveIntegerField()
+    object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
