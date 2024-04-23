@@ -6,7 +6,7 @@ class Promotion(models.Model):
      discount = models.FloatField()
 
 class Collection(models.Model):
-     tile = models.CharField(max_length=255)
+     title = models.CharField(max_length=255)
      featured_product = models.ForeignKey("Product", null=True, on_delete=models.SET_NULL, related_name='+')
 
 class Product(models.Model):
@@ -44,7 +44,7 @@ class Order(models.Model):
         (PAYMENT_STATUS_FAILED, 'Failed')]
     placed_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
-    Customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
 
 class OrderItem(models.Model):
      order = models.ForeignKey(Order, on_delete=models.CASCADE)
