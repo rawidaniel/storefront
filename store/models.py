@@ -2,13 +2,19 @@ from django.db import models
 
 # Create your models here.
 class Promotion(models.Model):
-     description = models.CharField(max_length=255)
-     discount = models.FloatField()
+    description = models.CharField(max_length=255)
+    discount = models.FloatField()
 
 class Collection(models.Model):
-     title = models.CharField(max_length=255)
-     featured_product = models.ForeignKey("Product", null=True, on_delete=models.SET_NULL, related_name='+')
+    title = models.CharField(max_length=255)
+    featured_product = models.ForeignKey("Product", null=True, on_delete=models.SET_NULL, related_name='+')
+    
+    def __str__(self):
+        return self.title
 
+    class Meta:
+        ordering = ['title']
+     
 class Product(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
@@ -18,6 +24,12 @@ class Product(models.Model):
     last_update = models.DateTimeField(auto_now=True)
     collection =  models.ForeignKey(Collection, on_delete=models.PROTECT)
     promotions = models.ManyToManyField(Promotion)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['title']
 
 class Customer(models.Model):
     MEMBERSHIP_BRONZE = 'B'
