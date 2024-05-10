@@ -3,14 +3,22 @@ from decimal import Decimal
 from .models import Collection, Product
 
 
-class CollectionSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    title = serializers.CharField(max_length=255)
+class CollectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = ['id', 'title', 'products_count']
+    
+    products_count = serializers.SerializerMethodField(method_name='get_products_count')
+
+    def get_products_count(self, obj):
+        return obj.products.count()
+
+  
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'title', 'unit_price','price_with_tax', 'collection']
+        fields = ['id', 'title','description', 'slug', 'inventory', 'unit_price','price_with_tax', 'collection']
     
     price_with_tax = serializers.SerializerMethodField(method_name='calculate_tax')
     # id = serializers.IntegerField()

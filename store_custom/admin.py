@@ -10,8 +10,8 @@ class TagInline(GenericTabularInline):
     autocomplete_fields = ['tag']
     extra = 0 
     model = TaggedItem
-    min_num = 1
-    max_num = 10
+    # min_num = 1
+    # max_num = 10
 
 class CustomProductAdmin(ProductAdmin):
     inlines = [TagInline]
