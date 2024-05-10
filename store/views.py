@@ -49,7 +49,7 @@ def product_details(request, id):
     # except Product.DoesNotExist:
     #     return Response(status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET', 'POST', 'DELETE'])
+@api_view(['GET', 'POST'])
 def collection_list(request):
     if request.method == 'GET':
         queryset = Collection.objects.annotate(products_count=Count('products')).all()
