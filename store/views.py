@@ -7,8 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
-from .models import Product, Collection, OrderItem
-from .serializers import ProductSerializer, CollectionSerializer
+from .models import Product, Collection, OrderItem, Review
+from .serializers import ProductSerializer, CollectionSerializer, ReviewSerializer
 
 # Create your views here.
 
@@ -85,6 +85,17 @@ class CollectionViewSet(ModelViewSet):
     #     collection.delete()
     #     return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class ReviewViewSet(ModelViewSet):
+    serializer_class = ReviewSerializer
+
+
+    def get_queryset(self):
+        return Review.objects.filter(product_id= self.kwargs['product_pk'])
+
+
+    def get_serializer_context(self):
+        return {"product_id": self.kwargs['product_pk']}
 
 # class CollectionList(ListCreateAPIView):
 #     queryset = Collection.objects.annotate(products_count=Count('products')).all()
