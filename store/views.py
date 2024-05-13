@@ -7,25 +7,34 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
-from .models import Product, Collection
+from .models import Product, Collection, OrderItem
 from .serializers import ProductSerializer, CollectionSerializer
 
 # Create your views here.
 
 
 class ProductViewSet(ModelViewSet):
-    queryset = Product.objects.all()[:5]
+    queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
     def get_serializer_context(self):
         return {'request': self.request}
 
-    def delete(self, request, pk):
-        product = get_object_or_404(Product, pk=pk)
-        if product.orderitems.count() > 0:
-            return Response({"error": "Product can not be deleted"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-        product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def destroy(self, request, *args, **kwargs):
+        print(kwargs)
+        # instance = self.get_object()
+        # if instance.orderitems.count() > 0:
+        #     return Response({"error": "Product can not be deleted."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if OrderItem.objects.filter(product_id=kwargs['pk']).count() > 0:
+            return Response({"error": "Product can not be deleted."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)   
+        return super().destroy(request, *args, **kwargs)
+
+    # def delete(self, request, pk):
+    #     product = get_object_or_404(Product, pk=pk)
+    #     if product.orderitems.count() > 0:
+    #         return Response({"error": "Product can not be deleted"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    #     product.delete()
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # class ProductList(ListCreateAPIView):
@@ -63,13 +72,18 @@ class CollectionViewSet(ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request}
 
-
-    def delete(self, request, pk):
-        collection = get_object_or_404(Collection.objects.annotate(products_count=Count('products')).all(), pk=pk)
-        if collection.products.count() > 0:
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.products.count() > 0:
             return Response({"error": "Collection can not be deleted."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-        collection.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return super().destroy(request, *args, **kwargs)
+
+    # def delete(self, request, pk):
+    #     collection = get_object_or_404(Collection.objects.annotate(products_count=Count('products')).all(), pk=pk)
+    #     if collection.products.count() > 0:
+    #         return Response({"error": "Collection can not be deleted."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    #     collection.delete()
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # class CollectionList(ListCreateAPIView):
